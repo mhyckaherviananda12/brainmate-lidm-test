@@ -1,0 +1,805 @@
+<!doctype html>
+<html lang="id"><head><script src="/_sdk/telemetry_sdk.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BrainMate AI</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2563EB',
+                        secondary: '#7C3AED',
+                        accent: '#10B981'
+                    }
+                }
+            }
+        }
+    </script>
+  <style>
+        * { font-family: 'DM Sans', sans-serif; }
+        .glass { background: rgba(255,255,255,0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.3); }
+        .gradient-bg { background: linear-gradient(135deg, #2563EB 0%, #7C3AED 100%); }
+        .sidebar-item { transition: all 0.2s; }
+        .sidebar-item:hover, .sidebar-item.active { background: rgba(37,99,235,0.1); color: #2563EB; }
+        .stat-card { transition: transform 0.2s; }
+        .stat-card:hover { transform: translateY(-2px); }
+        .chat-bubble { animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+        .node-active { box-shadow: 0 0 0 4px rgba(37,99,235,0.2); }
+        .node-locked { opacity: 0.5; }
+        .page-section { display: none; }
+        .page-section.active { display: block; }
+    </style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="/_sdk/resizing_sdk.js" type="text/javascript"></script>
+ </head>
+ <body data-template-id="__page-root" class="min-h-screen bg-gray-50" style="background: rgb(249, 250, 251);">
+  <!-- Role Switcher -->
+  <div class="fixed top-4 right-4 z-50 flex gap-1 p-1 rounded-full glass shadow-lg">
+   <button id="btn-guru" onclick="switchRole('guru')" class="px-4 py-2 rounded-full text-sm font-semibold bg-primary text-white transition">Guru</button> <button id="btn-siswa" onclick="switchRole('siswa')" class="px-4 py-2 rounded-full text-sm font-semibold text-gray-600 transition">Siswa</button>
+  </div><!-- GURU VIEW -->
+  <div id="guru-view" class="flex min-h-screen">
+   <!-- Sidebar -->
+   <aside class="w-64 bg-white border-r border-gray-100 p-6 flex flex-col fixed h-full">
+    <div class="flex items-center gap-3 mb-8">
+     <div class="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center">
+      <i data-lucide="brain" class="w-5 h-5 text-white"></i>
+     </div>
+     <h1 data-template-id="guru-logo" class="canva-text font-bold text-lg" style="color: rgb(17, 24, 39); font-weight: 700; font-style: normal; font-size: 30px;">BrainMate AI</h1>
+    </div>
+    <nav class="flex-1 space-y-1">
+     <button onclick="showSection('guru','dashboard')" class="sidebar-item active w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-left" data-nav="dashboard"><i data-lucide="layout-dashboard" class="w-4 h-4"></i>Dashboard</button> <button onclick="showSection('guru','kelas')" class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-left" data-nav="kelas"><i data-lucide="users" class="w-4 h-4"></i>Kelas Saya</button> <button onclick="showSection('guru','materi')" class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-left" data-nav="materi"><i data-lucide="book-open" class="w-4 h-4"></i>Materi</button> <button onclick="showSection('guru','alur')" class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-left" data-nav="alur"><i data-lucide="git-branch" class="w-4 h-4"></i>Alur Pembelajaran</button> <button onclick="showSection('guru','bank')" class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-left" data-nav="bank"><i data-lucide="database" class="w-4 h-4"></i>Bank Soal</button> <button onclick="showSection('guru','analisis')" class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-left" data-nav="analisis"><i data-lucide="bar-chart-3" class="w-4 h-4"></i>Analisis</button> <button onclick="showSection('guru','ai')" class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-left" data-nav="ai"><i data-lucide="sparkles" class="w-4 h-4"></i>AI Assistant</button> <button onclick="showSection('guru','pengaturan')" class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-left" data-nav="pengaturan"><i data-lucide="settings" class="w-4 h-4"></i>Pengaturan</button>
+    </nav>
+    <div class="flex items-center gap-3 pt-4 border-t">
+     <img data-template-id="teacher-avatar" class="canva-image w-9 h-9 rounded-full object-cover" loading="lazy" src="https://images.pexels.com/photos/8423062/pexels-photo-8423062.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=400" alt="A friendly female teacher smiles in front of a classroom whiteboard">
+     <div>
+      <p data-template-id="teacher-name" class="canva-text text-sm font-semibold" style="color: rgb(17, 24, 39); font-weight: 600; font-style: normal; font-size: 15px;">Pak Eko</p>
+      <p class="text-xs text-gray-400">Guru</p>
+     </div>
+    </div>
+   </aside><!-- Main Content -->
+   <main class="ml-64 flex-1 p-8">
+    <!-- Dashboard -->
+    <section id="guru-dashboard" class="page-section active">
+     <h2 data-template-id="guru-welcome" class="canva-text text-2xl font-bold mb-6" style="color: rgb(17, 24, 39); font-weight: 700; font-style: normal; font-size: 23px;">Selamat Datang, Pak Eko 👋</h2>
+     <div class="grid grid-cols-4 gap-4 mb-8">
+      <div class="stat-card glass rounded-2xl p-5">
+       <div class="flex items-center justify-between mb-2">
+        <span class="text-xs text-gray-500 font-medium">Jumlah Kelas</span>
+        <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center"><i data-lucide="book" class="w-4 h-4 text-primary"></i>
+        </div>
+       </div>
+       <p class="text-2xl font-bold text-gray-900">8</p>
+       <p class="text-xs text-accent mt-1">+2 bulan ini</p>
+      </div>
+      <div class="stat-card glass rounded-2xl p-5">
+       <div class="flex items-center justify-between mb-2">
+        <span class="text-xs text-gray-500 font-medium">Jumlah Siswa</span>
+        <div class="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center"><i data-lucide="users" class="w-4 h-4 text-secondary"></i>
+        </div>
+       </div>
+       <p class="text-2xl font-bold text-gray-900">247</p>
+       <p class="text-xs text-accent mt-1">+18 siswa baru</p>
+      </div>
+      <div class="stat-card glass rounded-2xl p-5">
+       <div class="flex items-center justify-between mb-2">
+        <span class="text-xs text-gray-500 font-medium">Rata-rata Nilai</span>
+        <div class="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center"><i data-lucide="trending-up" class="w-4 h-4 text-accent"></i>
+        </div>
+       </div>
+       <p class="text-2xl font-bold text-gray-900">78.5</p>
+       <p class="text-xs text-accent mt-1">↑ 4.2 dari bulan lalu</p>
+      </div>
+      <div class="stat-card glass rounded-2xl p-5">
+       <div class="flex items-center justify-between mb-2">
+        <span class="text-xs text-gray-500 font-medium">Penyelesaian</span>
+        <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center"><i data-lucide="check-circle" class="w-4 h-4 text-primary"></i>
+        </div>
+       </div>
+       <p class="text-2xl font-bold text-gray-900">82%</p>
+       <p class="text-xs text-accent mt-1">↑ 5% minggu ini</p>
+      </div>
+     </div><!-- Charts -->
+     <div class="grid grid-cols-2 gap-6 mb-6">
+      <div class="glass rounded-2xl p-6">
+       <h3 class="font-semibold text-sm mb-4">Perkembangan Belajar</h3>
+       <div class="h-48 flex items-end gap-2 px-2">
+        <div class="flex-1 flex flex-col items-center gap-1">
+         <div class="w-full bg-primary/20 rounded-t-lg" style="height:60%"></div><span class="text-[10px] text-gray-400">Sen</span>
+        </div>
+        <div class="flex-1 flex flex-col items-center gap-1">
+         <div class="w-full bg-primary/40 rounded-t-lg" style="height:75%"></div><span class="text-[10px] text-gray-400">Sel</span>
+        </div>
+        <div class="flex-1 flex flex-col items-center gap-1">
+         <div class="w-full bg-primary/60 rounded-t-lg" style="height:45%"></div><span class="text-[10px] text-gray-400">Rab</span>
+        </div>
+        <div class="flex-1 flex flex-col items-center gap-1">
+         <div class="w-full bg-primary/80 rounded-t-lg" style="height:90%"></div><span class="text-[10px] text-gray-400">Kam</span>
+        </div>
+        <div class="flex-1 flex flex-col items-center gap-1">
+         <div class="w-full bg-primary rounded-t-lg" style="height:70%"></div><span class="text-[10px] text-gray-400">Jum</span>
+        </div>
+       </div>
+      </div>
+      <div class="glass rounded-2xl p-6">
+       <h3 class="font-semibold text-sm mb-4">Pretest vs Posttest</h3>
+       <div class="h-48 flex items-end gap-3 px-2">
+        <div class="flex-1 flex flex-col items-center gap-1">
+         <div class="flex gap-1 items-end h-full">
+          <div class="w-4 bg-secondary/60 rounded-t" style="height:50%"></div>
+          <div class="w-4 bg-accent rounded-t" style="height:78%"></div>
+         </div><span class="text-[10px] text-gray-400">Kelas A</span>
+        </div>
+        <div class="flex-1 flex flex-col items-center gap-1">
+         <div class="flex gap-1 items-end h-full">
+          <div class="w-4 bg-secondary/60 rounded-t" style="height:45%"></div>
+          <div class="w-4 bg-accent rounded-t" style="height:72%"></div>
+         </div><span class="text-[10px] text-gray-400">Kelas B</span>
+        </div>
+        <div class="flex-1 flex flex-col items-center gap-1">
+         <div class="flex gap-1 items-end h-full">
+          <div class="w-4 bg-secondary/60 rounded-t" style="height:55%"></div>
+          <div class="w-4 bg-accent rounded-t" style="height:85%"></div>
+         </div><span class="text-[10px] text-gray-400">Kelas C</span>
+        </div>
+        <div class="flex-1 flex flex-col items-center gap-1">
+         <div class="flex gap-1 items-end h-full">
+          <div class="w-4 bg-secondary/60 rounded-t" style="height:40%"></div>
+          <div class="w-4 bg-accent rounded-t" style="height:68%"></div>
+         </div><span class="text-[10px] text-gray-400">Kelas D</span>
+        </div>
+       </div>
+       <div class="flex gap-4 mt-3 justify-center">
+        <span class="flex items-center gap-1 text-[10px] text-gray-500"><span class="w-3 h-3 rounded bg-secondary/60"></span>Pretest</span> <span class="flex items-center gap-1 text-[10px] text-gray-500"><span class="w-3 h-3 rounded bg-accent"></span>Posttest</span>
+       </div>
+      </div>
+     </div><!-- Activity -->
+     <div class="glass rounded-2xl p-6">
+      <h3 class="font-semibold text-sm mb-4">Aktivitas Terbaru</h3>
+      <div class="space-y-3">
+       <div class="flex items-center gap-3 p-3 bg-white/50 rounded-xl">
+        <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center"><i data-lucide="file-plus" class="w-4 h-4 text-primary"></i>
+        </div>
+        <div class="flex-1">
+         <p class="text-sm font-medium">Materi "Sistem Persamaan Linear" ditambahkan</p>
+         <p class="text-xs text-gray-400">2 jam yang lalu</p>
+        </div>
+       </div>
+       <div class="flex items-center gap-3 p-3 bg-white/50 rounded-xl">
+        <div class="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center"><i data-lucide="check" class="w-4 h-4 text-accent"></i>
+        </div>
+        <div class="flex-1">
+         <p class="text-sm font-medium">25 siswa menyelesaikan Posttest Bab 3</p>
+         <p class="text-xs text-gray-400">5 jam yang lalu</p>
+        </div>
+       </div>
+       <div class="flex items-center gap-3 p-3 bg-white/50 rounded-xl">
+        <div class="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center"><i data-lucide="sparkles" class="w-4 h-4 text-secondary"></i>
+        </div>
+        <div class="flex-1">
+         <p class="text-sm font-medium">AI menghasilkan 20 soal baru untuk Bank Soal</p>
+         <p class="text-xs text-gray-400">1 hari yang lalu</p>
+        </div>
+       </div>
+      </div>
+     </div>
+    </section><!-- Materi -->
+    <section id="guru-materi" class="page-section">
+     <div class="flex items-center justify-between mb-6">
+      <h2 class="text-2xl font-bold">Materi Pembelajaran</h2><button class="px-4 py-2 gradient-bg text-white rounded-xl text-sm font-semibold flex items-center gap-2"><i data-lucide="plus" class="w-4 h-4"></i>Upload Materi</button>
+     </div>
+     <div class="grid grid-cols-3 gap-4">
+      <div class="glass rounded-2xl p-5 stat-card">
+       <div class="flex items-center gap-2 mb-3">
+        <div class="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center"><i data-lucide="file-text" class="w-4 h-4 text-red-500"></i>
+        </div><span class="text-xs font-medium text-gray-400">PDF</span>
+       </div>
+       <h4 class="font-semibold text-sm mb-1">Sistem Persamaan Linear</h4>
+       <p class="text-xs text-gray-400 mb-3">Matematika • 24 halaman</p>
+       <div class="flex gap-2"><button class="text-xs px-3 py-1 bg-primary/10 text-primary rounded-lg font-medium">Preview</button><button class="text-xs px-3 py-1 bg-gray-100 text-gray-600 rounded-lg font-medium">Edit</button>
+       </div>
+      </div>
+      <div class="glass rounded-2xl p-5 stat-card">
+       <div class="flex items-center gap-2 mb-3">
+        <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center"><i data-lucide="video" class="w-4 h-4 text-blue-500"></i>
+        </div><span class="text-xs font-medium text-gray-400">Video</span>
+       </div>
+       <h4 class="font-semibold text-sm mb-1">Pengantar Trigonometri</h4>
+       <p class="text-xs text-gray-400 mb-3">Matematika • 15 menit</p>
+       <div class="flex gap-2"><button class="text-xs px-3 py-1 bg-primary/10 text-primary rounded-lg font-medium">Preview</button><button class="text-xs px-3 py-1 bg-gray-100 text-gray-600 rounded-lg font-medium">Edit</button>
+       </div>
+      </div>
+      <div class="glass rounded-2xl p-5 stat-card">
+       <div class="flex items-center gap-2 mb-3">
+        <div class="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center"><i data-lucide="presentation" class="w-4 h-4 text-orange-500"></i>
+        </div><span class="text-xs font-medium text-gray-400">PPT</span>
+       </div>
+       <h4 class="font-semibold text-sm mb-1">Statistika Deskriptif</h4>
+       <p class="text-xs text-gray-400 mb-3">Matematika • 32 slide</p>
+       <div class="flex gap-2"><button class="text-xs px-3 py-1 bg-primary/10 text-primary rounded-lg font-medium">Preview</button><button class="text-xs px-3 py-1 bg-gray-100 text-gray-600 rounded-lg font-medium">Edit</button>
+       </div>
+      </div>
+     </div>
+    </section><!-- Alur -->
+    <section id="guru-alur" class="page-section">
+     <h2 class="text-2xl font-bold mb-6">Alur Pembelajaran</h2>
+     <div class="glass rounded-2xl p-8">
+      <div class="flex items-center justify-between gap-4">
+       <div class="flex flex-col items-center gap-2">
+        <div class="w-16 h-16 rounded-2xl bg-secondary/10 flex items-center justify-center border-2 border-secondary"><i data-lucide="clipboard-list" class="w-6 h-6 text-secondary"></i>
+        </div><span class="text-xs font-semibold">Pretest</span>
+       </div>
+       <div class="flex-1 h-1 bg-gradient-to-r from-secondary to-primary rounded"></div>
+       <div class="flex flex-col items-center gap-2">
+        <div class="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center border-2 border-primary"><i data-lucide="book-open" class="w-6 h-6 text-primary"></i>
+        </div><span class="text-xs font-semibold">Materi</span>
+       </div>
+       <div class="flex-1 h-1 bg-gradient-to-r from-primary to-accent rounded"></div>
+       <div class="flex flex-col items-center gap-2">
+        <div class="w-16 h-16 rounded-2xl bg-accent/10 flex items-center justify-center border-2 border-accent"><i data-lucide="pen-tool" class="w-6 h-6 text-accent"></i>
+        </div><span class="text-xs font-semibold">Latihan</span>
+       </div>
+       <div class="flex-1 h-1 bg-gradient-to-r from-accent to-secondary rounded"></div>
+       <div class="flex flex-col items-center gap-2">
+        <div class="w-16 h-16 rounded-2xl bg-secondary/10 flex items-center justify-center border-2 border-secondary"><i data-lucide="award" class="w-6 h-6 text-secondary"></i>
+        </div><span class="text-xs font-semibold">Posttest</span>
+       </div>
+      </div>
+      <div class="mt-8 grid grid-cols-2 gap-4">
+       <div class="p-4 bg-white/60 rounded-xl">
+        <p class="text-xs text-gray-400 mb-1">Nilai Minimum</p>
+        <p class="font-semibold text-sm">75 / 100</p>
+       </div>
+       <div class="p-4 bg-white/60 rounded-xl">
+        <p class="text-xs text-gray-400 mb-1">Jadwal</p>
+        <p class="font-semibold text-sm">10 Jun - 20 Jun 2026</p>
+       </div>
+      </div>
+      <div class="mt-4 flex gap-3">
+       <button class="px-4 py-2 gradient-bg text-white rounded-xl text-sm font-semibold">Simpan &amp; Publikasikan</button> <button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-xl text-sm font-semibold">Atur Ulang</button>
+      </div>
+     </div>
+    </section><!-- Bank Soal -->
+    <section id="guru-bank" class="page-section">
+     <div class="flex items-center justify-between mb-6">
+      <h2 class="text-2xl font-bold">Bank Soal</h2>
+      <div class="flex gap-2">
+       <button class="px-4 py-2 gradient-bg text-white rounded-xl text-sm font-semibold flex items-center gap-2"><i data-lucide="sparkles" class="w-4 h-4"></i>Generate AI</button> <button class="px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-semibold flex items-center gap-2"><i data-lucide="upload" class="w-4 h-4"></i>Import</button>
+      </div>
+     </div>
+     <div class="space-y-3">
+      <div class="glass rounded-xl p-4 flex items-center justify-between">
+       <div class="flex items-center gap-3">
+        <span class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-xs font-bold text-primary">PG</span>
+        <div>
+         <p class="text-sm font-medium">Persamaan Kuadrat - Set A</p>
+         <p class="text-xs text-gray-400">20 soal • Pilihan Ganda</p>
+        </div>
+       </div>
+       <div class="flex gap-2"><button class="text-xs px-3 py-1 bg-primary/10 text-primary rounded-lg font-medium">Edit</button><button class="text-xs px-3 py-1 bg-red-50 text-red-500 rounded-lg font-medium">Hapus</button>
+       </div>
+      </div>
+      <div class="glass rounded-xl p-4 flex items-center justify-between">
+       <div class="flex items-center gap-3">
+        <span class="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center text-xs font-bold text-secondary">U</span>
+        <div>
+         <p class="text-sm font-medium">Trigonometri - Uraian</p>
+         <p class="text-xs text-gray-400">10 soal • Uraian</p>
+        </div>
+       </div>
+       <div class="flex gap-2"><button class="text-xs px-3 py-1 bg-primary/10 text-primary rounded-lg font-medium">Edit</button><button class="text-xs px-3 py-1 bg-red-50 text-red-500 rounded-lg font-medium">Hapus</button>
+       </div>
+      </div>
+     </div>
+    </section><!-- Analisis -->
+    <section id="guru-analisis" class="page-section">
+     <h2 class="text-2xl font-bold mb-6">Analisis Pembelajaran</h2>
+     <div class="grid grid-cols-2 gap-4 mb-6">
+      <div class="glass rounded-2xl p-5">
+       <h4 class="text-sm font-semibold mb-3">Distribusi Nilai</h4>
+       <div class="flex items-end gap-1 h-32">
+        <div class="flex-1 bg-red-200 rounded-t" style="height:15%"></div>
+        <div class="flex-1 bg-orange-200 rounded-t" style="height:25%"></div>
+        <div class="flex-1 bg-yellow-200 rounded-t" style="height:35%"></div>
+        <div class="flex-1 bg-green-200 rounded-t" style="height:55%"></div>
+        <div class="flex-1 bg-accent/40 rounded-t" style="height:80%"></div>
+        <div class="flex-1 bg-accent rounded-t" style="height:60%"></div>
+       </div>
+       <div class="flex justify-between text-[9px] text-gray-400 mt-1"><span>0-30</span><span>31-50</span><span>51-60</span><span>61-70</span><span>71-85</span><span>86-100</span>
+       </div>
+      </div>
+      <div class="glass rounded-2xl p-5">
+       <h4 class="text-sm font-semibold mb-3">Siswa Butuh Pendampingan</h4>
+       <div class="space-y-2">
+        <div class="flex items-center justify-between p-2 bg-red-50 rounded-lg"><span class="text-sm">Ahmad R.</span><span class="text-xs text-red-500 font-semibold">Nilai: 42</span>
+        </div>
+        <div class="flex items-center justify-between p-2 bg-red-50 rounded-lg"><span class="text-sm">Siti N.</span><span class="text-xs text-red-500 font-semibold">Nilai: 48</span>
+        </div>
+        <div class="flex items-center justify-between p-2 bg-orange-50 rounded-lg"><span class="text-sm">Budi S.</span><span class="text-xs text-orange-500 font-semibold">Nilai: 55</span>
+        </div>
+       </div>
+      </div>
+     </div>
+    </section><!-- AI Assistant -->
+    <section id="guru-ai" class="page-section">
+     <h2 class="text-2xl font-bold mb-6">AI Assistant</h2>
+     <div class="glass rounded-2xl overflow-hidden flex flex-col" style="height: calc(70 * min(var(--vh, 1vh), 1vh))">
+      <div class="flex-1 p-6 overflow-y-auto space-y-4" id="guru-chat-area">
+       <div class="chat-bubble flex gap-3">
+        <div class="w-8 h-8 rounded-full gradient-bg flex items-center justify-center flex-shrink-0"><i data-lucide="sparkles" class="w-4 h-4 text-white"></i>
+        </div>
+        <div class="bg-white/80 rounded-2xl rounded-tl-sm p-4 max-w-lg">
+         <p class="text-sm">Halo! Saya BrainMate AI Assistant. Saya bisa membantu Anda membuat soal, merangkum materi, menganalisis performa kelas, atau merekomendasikan strategi mengajar. Apa yang bisa saya bantu?</p>
+        </div>
+       </div>
+      </div>
+      <div class="p-4 border-t bg-white/50">
+       <form onsubmit="sendGuruChat(event)" class="flex gap-3">
+        <input type="text" id="guru-chat-input" placeholder="Ketik pesan..." class="flex-1 px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"> <button type="submit" class="px-4 py-3 gradient-bg text-white rounded-xl"><i data-lucide="send" class="w-4 h-4"></i></button>
+       </form>
+       <div class="flex gap-2 mt-3 flex-wrap">
+        <button onclick="guruQuickAction('Buatkan 5 soal pilihan ganda tentang persamaan kuadrat')" class="text-xs px-3 py-1.5 bg-primary/10 text-primary rounded-full font-medium">Buat Soal</button> <button onclick="guruQuickAction('Buat rangkuman materi trigonometri')" class="text-xs px-3 py-1.5 bg-secondary/10 text-secondary rounded-full font-medium">Buat Rangkuman</button> <button onclick="guruQuickAction('Analisis performa Kelas A')" class="text-xs px-3 py-1.5 bg-accent/10 text-accent rounded-full font-medium">Analisis Kelas</button> <button onclick="guruQuickAction('Rekomendasikan strategi mengajar untuk siswa yang kesulitan')" class="text-xs px-3 py-1.5 bg-orange-100 text-orange-600 rounded-full font-medium">Strategi Mengajar</button>
+       </div>
+      </div>
+     </div>
+    </section><!-- Pengaturan -->
+    <section id="guru-pengaturan" class="page-section">
+     <h2 class="text-2xl font-bold mb-6">Pengaturan</h2>
+     <div class="grid grid-cols-2 gap-4">
+      <div class="glass rounded-2xl p-6">
+       <h4 class="font-semibold text-sm mb-4">Profil Guru</h4>
+       <div class="space-y-4">
+        <div><label class="text-xs text-gray-500 font-medium block mb-1">Nama</label> <input type="text" value="Pak Eko" class="w-full px-3 py-2 bg-white/60 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/30">
+        </div>
+        <div><label class="text-xs text-gray-500 font-medium block mb-1">Email</label> <input type="email" value="sarah@sekolah.id" class="w-full px-3 py-2 bg-white/60 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/30">
+        </div>
+        <div><label class="text-xs text-gray-500 font-medium block mb-1">Telepon</label> <input type="tel" value="+62812345678" class="w-full px-3 py-2 bg-white/60 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/30">
+        </div><button class="w-full px-4 py-2 gradient-bg text-white rounded-xl text-sm font-semibold">Simpan Perubahan</button>
+       </div>
+      </div>
+      <div class="space-y-4">
+       <div class="glass rounded-2xl p-6">
+        <h4 class="font-semibold text-sm mb-3">Notifikasi</h4>
+        <div class="space-y-2">
+         <div class="flex items-center justify-between"><span class="text-sm">Pemberitahuan Email</span> <input type="checkbox" checked="" class="w-4 h-4 rounded">
+         </div>
+         <div class="flex items-center justify-between"><span class="text-sm">Update Pembelajaran</span> <input type="checkbox" checked="" class="w-4 h-4 rounded">
+         </div>
+         <div class="flex items-center justify-between"><span class="text-sm">Laporan Mingguan</span> <input type="checkbox" class="w-4 h-4 rounded">
+         </div>
+        </div>
+       </div>
+       <div class="glass rounded-2xl p-6">
+        <h4 class="font-semibold text-sm mb-3">Zona Waktu</h4><select class="w-full px-3 py-2 bg-white/60 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"> <option>WIB (UTC+7)</option> <option>WITA (UTC+8)</option> <option>WIT (UTC+9)</option> </select>
+       </div>
+      </div>
+     </div>
+    </section>
+    <h2 class="text-2xl font-bold mb-6">Kelas Saya</h2>
+    <div class="grid grid-cols-3 gap-4">
+     <div class="glass rounded-2xl p-5 stat-card">
+      <h4 class="font-semibold mb-1">Matematika X-A</h4>
+      <p class="text-xs text-gray-400">32 siswa • Semester Genap</p>
+      <div class="mt-3 w-full bg-gray-100 rounded-full h-2">
+       <div class="bg-primary rounded-full h-2" style="width:78%"></div>
+      </div>
+      <p class="text-xs text-gray-400 mt-1">78% progress</p>
+     </div>
+     <div class="glass rounded-2xl p-5 stat-card">
+      <h4 class="font-semibold mb-1">Matematika X-B</h4>
+      <p class="text-xs text-gray-400">30 siswa • Semester Genap</p>
+      <div class="mt-3 w-full bg-gray-100 rounded-full h-2">
+       <div class="bg-secondary rounded-full h-2" style="width:65%"></div>
+      </div>
+      <p class="text-xs text-gray-400 mt-1">65% progress</p>
+     </div>
+     <div class="glass rounded-2xl p-5 stat-card">
+      <h4 class="font-semibold mb-1">Matematika XI-A</h4>
+      <p class="text-xs text-gray-400">28 siswa • Semester Genap</p>
+      <div class="mt-3 w-full bg-gray-100 rounded-full h-2">
+       <div class="bg-accent rounded-full h-2" style="width:90%"></div>
+      </div>
+      <p class="text-xs text-gray-400 mt-1">90% progress</p>
+     </div>
+    </div>
+   </main>
+  </div><!-- SISWA VIEW -->
+  <div id="siswa-view" class="flex min-h-screen hidden">
+   <!-- Sidebar -->
+   <aside class="w-64 bg-white border-r border-gray-100 p-6 flex flex-col fixed h-full">
+    <div class="flex items-center gap-3 mb-8">
+     <div class="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center">
+      <i data-lucide="brain" class="w-5 h-5 text-white"></i>
+     </div>
+     <h1 data-template-id="siswa-logo" class="canva-text font-bold text-lg" style="color: rgb(17, 24, 39); font-weight: 700; font-style: normal; font-size: 30px;">BrainMate AI</h1>
+    </div>
+    <nav class="flex-1 space-y-1">
+     <button onclick="showSection('siswa','dashboard')" class="sidebar-item active w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-left" data-nav="dashboard"><i data-lucide="layout-dashboard" class="w-4 h-4"></i>Dashboard</button> <button onclick="showSection('siswa','materi')" class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-left" data-nav="materi"><i data-lucide="book-open" class="w-4 h-4"></i>Materi</button> <button onclick="showSection('siswa','alur')" class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-left" data-nav="alur"><i data-lucide="git-branch" class="w-4 h-4"></i>Alur Pembelajaran</button> <button onclick="showSection('siswa','latihan')" class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-left" data-nav="latihan"><i data-lucide="pen-tool" class="w-4 h-4"></i>Latihan Soal</button> <button onclick="showSection('siswa','ai')" class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-left" data-nav="ai"><i data-lucide="sparkles" class="w-4 h-4"></i>BrainMate AI</button> <button onclick="showSection('siswa','analisis')" class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-left" data-nav="analisis"><i data-lucide="bar-chart-3" class="w-4 h-4"></i>Analisis Belajar</button> <button onclick="showSection('siswa','profil')" class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-left" data-nav="profil"><i data-lucide="user" class="w-4 h-4"></i>Profil</button>
+    </nav>
+    <div class="flex items-center gap-3 pt-4 border-t">
+     <img data-template-id="student-avatar" class="canva-image w-9 h-9 rounded-full object-cover" loading="lazy" src="https://images.pexels.com/photos/5538020/pexels-photo-5538020.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=400" alt="Cheerful young student with short hair holding notebooks">
+     <div>
+      <p data-template-id="student-name" class="canva-text text-sm font-semibold" style="color: rgb(17, 24, 39); font-weight: 600; font-style: normal; font-size: 15px;">Mbak Zulinda Ayu Andira PEND. KIMIA UNY</p>
+      <p class="text-xs text-gray-400">Siswa</p>
+     </div>
+    </div>
+   </aside>
+   <main class="ml-64 flex-1 p-8">
+    <!-- Dashboard Siswa -->
+    <section id="siswa-dashboard" class="page-section active">
+     <h2 data-template-id="siswa-welcome" class="canva-text text-2xl font-bold mb-6" style="color: rgb(17, 24, 39); font-weight: 700; font-style: normal; font-size: 23px;">Halo, Andi! Semangat Belajar 🚀</h2>
+     <div class="grid grid-cols-4 gap-4 mb-8">
+      <div class="stat-card glass rounded-2xl p-5">
+       <span class="text-xs text-gray-500 font-medium">Progress Belajar</span>
+       <p class="text-2xl font-bold text-gray-900 mt-2">72%</p>
+       <div class="mt-2 w-full bg-gray-100 rounded-full h-2">
+        <div class="bg-primary rounded-full h-2" style="width:72%"></div>
+       </div>
+      </div>
+      <div class="stat-card glass rounded-2xl p-5">
+       <span class="text-xs text-gray-500 font-medium">Nilai Rata-rata</span>
+       <p class="text-2xl font-bold text-gray-900 mt-2">81.2</p>
+       <p class="text-xs text-accent mt-1">↑ 3.5 minggu ini</p>
+      </div>
+      <div class="stat-card glass rounded-2xl p-5">
+       <span class="text-xs text-gray-500 font-medium">Materi Selesai</span>
+       <p class="text-2xl font-bold text-gray-900 mt-2">18/25</p>
+       <p class="text-xs text-gray-400 mt-1">7 tersisa</p>
+      </div>
+      <div class="stat-card glass rounded-2xl p-5">
+       <span class="text-xs text-gray-500 font-medium">Tugas Pending</span>
+       <p class="text-2xl font-bold text-orange-500 mt-2">3</p>
+       <p class="text-xs text-orange-400 mt-1">Deadline minggu ini</p>
+      </div>
+     </div><!-- Rekomendasi AI -->
+     <div class="glass rounded-2xl p-6 mb-6 border border-primary/20">
+      <div class="flex items-center gap-2 mb-3">
+       <i data-lucide="sparkles" class="w-4 h-4 text-primary"></i>
+       <h3 class="text-sm font-semibold text-primary">Rekomendasi AI</h3>
+      </div>
+      <p class="text-sm text-gray-600">Berdasarkan analisis, kamu perlu memperkuat pemahaman di topik <strong>Trigonometri</strong> dan <strong>Fungsi Kuadrat</strong>. Coba kerjakan latihan tambahan di kedua topik ini.</p>
+     </div><!-- Target Mingguan -->
+     <div class="grid grid-cols-2 gap-4">
+      <div class="glass rounded-2xl p-5">
+       <h4 class="text-sm font-semibold mb-3">Target Mingguan</h4>
+       <div class="space-y-3">
+        <div class="flex items-center gap-3">
+         <div class="w-5 h-5 rounded-full bg-accent flex items-center justify-center"><i data-lucide="check" class="w-3 h-3 text-white"></i>
+         </div><span class="text-sm line-through text-gray-400">Selesaikan Bab 5</span>
+        </div>
+        <div class="flex items-center gap-3">
+         <div class="w-5 h-5 rounded-full bg-accent flex items-center justify-center"><i data-lucide="check" class="w-3 h-3 text-white"></i>
+         </div><span class="text-sm line-through text-gray-400">Kerjakan latihan soal</span>
+        </div>
+        <div class="flex items-center gap-3">
+         <div class="w-5 h-5 rounded-full border-2 border-gray-200"></div><span class="text-sm">Review materi trigonometri</span>
+        </div>
+        <div class="flex items-center gap-3">
+         <div class="w-5 h-5 rounded-full border-2 border-gray-200"></div><span class="text-sm">Kerjakan posttest Bab 4</span>
+        </div>
+       </div>
+      </div>
+      <div class="glass rounded-2xl p-5">
+       <h4 class="text-sm font-semibold mb-3">Perkembangan Minggu Ini</h4>
+       <div class="h-32 flex items-end gap-2">
+        <div class="flex-1 flex flex-col items-center gap-1">
+         <div class="w-full bg-primary/30 rounded-t" style="height:40%"></div><span class="text-[9px] text-gray-400">Sen</span>
+        </div>
+        <div class="flex-1 flex flex-col items-center gap-1">
+         <div class="w-full bg-primary/50 rounded-t" style="height:65%"></div><span class="text-[9px] text-gray-400">Sel</span>
+        </div>
+        <div class="flex-1 flex flex-col items-center gap-1">
+         <div class="w-full bg-primary/70 rounded-t" style="height:50%"></div><span class="text-[9px] text-gray-400">Rab</span>
+        </div>
+        <div class="flex-1 flex flex-col items-center gap-1">
+         <div class="w-full bg-primary/80 rounded-t" style="height:80%"></div><span class="text-[9px] text-gray-400">Kam</span>
+        </div>
+        <div class="flex-1 flex flex-col items-center gap-1">
+         <div class="w-full bg-primary rounded-t" style="height:90%"></div><span class="text-[9px] text-gray-400">Jum</span>
+        </div>
+       </div>
+      </div>
+     </div>
+    </section><!-- Materi Siswa -->
+    <section id="siswa-materi" class="page-section">
+     <h2 class="text-2xl font-bold mb-6">Materi Pembelajaran</h2>
+     <div class="grid grid-cols-2 gap-4">
+      <div class="glass rounded-2xl p-5 stat-card">
+       <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center gap-2">
+         <div class="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center"><i data-lucide="file-text" class="w-4 h-4 text-red-500"></i>
+         </div><span class="text-xs text-gray-400">PDF</span>
+        </div><span class="text-xs px-2 py-0.5 bg-accent/10 text-accent rounded-full font-medium">Selesai</span>
+       </div>
+       <h4 class="font-semibold text-sm mb-1">Persamaan Linear</h4>
+       <div class="w-full bg-gray-100 rounded-full h-1.5 mt-2">
+        <div class="bg-accent rounded-full h-1.5" style="width:100%"></div>
+       </div><button class="mt-3 text-xs px-3 py-1.5 bg-primary/10 text-primary rounded-lg font-medium flex items-center gap-1"><i data-lucide="sparkles" class="w-3 h-3"></i>Tanya BrainMate AI</button>
+      </div>
+      <div class="glass rounded-2xl p-5 stat-card">
+       <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center gap-2">
+         <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center"><i data-lucide="video" class="w-4 h-4 text-blue-500"></i>
+         </div><span class="text-xs text-gray-400">Video</span>
+        </div><span class="text-xs px-2 py-0.5 bg-primary/10 text-primary rounded-full font-medium">Aktif</span>
+       </div>
+       <h4 class="font-semibold text-sm mb-1">Trigonometri Dasar</h4>
+       <div class="w-full bg-gray-100 rounded-full h-1.5 mt-2">
+        <div class="bg-primary rounded-full h-1.5" style="width:60%"></div>
+       </div><button class="mt-3 text-xs px-3 py-1.5 bg-primary/10 text-primary rounded-lg font-medium flex items-center gap-1"><i data-lucide="sparkles" class="w-3 h-3"></i>Tanya BrainMate AI</button>
+      </div>
+     </div>
+    </section><!-- Alur Siswa -->
+    <section id="siswa-alur" class="page-section">
+     <h2 class="text-2xl font-bold mb-6">Alur Pembelajaran</h2>
+     <div class="glass rounded-2xl p-8">
+      <div class="flex items-center justify-between gap-4">
+       <div class="flex flex-col items-center gap-2">
+        <div class="w-14 h-14 rounded-2xl bg-accent/20 flex items-center justify-center border-2 border-accent"><i data-lucide="check" class="w-5 h-5 text-accent"></i>
+        </div><span class="text-xs font-semibold text-accent">Pretest ✓</span>
+       </div>
+       <div class="flex-1 h-1 bg-accent rounded"></div>
+       <div class="flex flex-col items-center gap-2">
+        <div class="w-14 h-14 rounded-2xl bg-primary/20 flex items-center justify-center border-2 border-primary node-active"><i data-lucide="book-open" class="w-5 h-5 text-primary"></i>
+        </div><span class="text-xs font-semibold text-primary">Materi</span> <span class="text-[10px] text-gray-400">60%</span>
+       </div>
+       <div class="flex-1 h-1 bg-gray-200 rounded"></div>
+       <div class="flex flex-col items-center gap-2">
+        <div class="w-14 h-14 rounded-2xl bg-gray-100 flex items-center justify-center border-2 border-gray-200 node-locked"><i data-lucide="pen-tool" class="w-5 h-5 text-gray-400"></i>
+        </div><span class="text-xs font-semibold text-gray-400">Latihan</span> <span class="text-[10px] text-gray-400">Terkunci</span>
+       </div>
+       <div class="flex-1 h-1 bg-gray-200 rounded"></div>
+       <div class="flex flex-col items-center gap-2">
+        <div class="w-14 h-14 rounded-2xl bg-gray-100 flex items-center justify-center border-2 border-gray-200 node-locked"><i data-lucide="award" class="w-5 h-5 text-gray-400"></i>
+        </div><span class="text-xs font-semibold text-gray-400">Posttest</span> <span class="text-[10px] text-gray-400">Terkunci</span>
+       </div>
+      </div>
+     </div>
+    </section><!-- Latihan Soal -->
+    <section id="siswa-latihan" class="page-section">
+     <h2 class="text-2xl font-bold mb-6">Latihan Soal</h2>
+     <div class="glass rounded-2xl p-6">
+      <div class="flex items-center justify-between mb-4">
+       <span class="text-xs text-gray-400">Soal 3 dari 10</span> <span class="text-xs px-2 py-1 bg-orange-50 text-orange-500 rounded-full font-medium">⏱ 08:42</span>
+      </div>
+      <div class="w-full bg-gray-100 rounded-full h-1.5 mb-6">
+       <div class="bg-primary rounded-full h-1.5" style="width:30%"></div>
+      </div>
+      <p class="text-sm font-medium mb-5">Jika sin(x) = 0.5 dan x berada di kuadran I, berapakah nilai cos(x)?</p>
+      <div class="space-y-2">
+       <button class="w-full text-left p-3 rounded-xl border border-gray-200 text-sm hover:border-primary hover:bg-primary/5 transition">A. √3/2</button> <button class="w-full text-left p-3 rounded-xl border border-primary bg-primary/5 text-sm font-medium text-primary">B. 1/2</button> <button class="w-full text-left p-3 rounded-xl border border-gray-200 text-sm hover:border-primary hover:bg-primary/5 transition">C. √2/2</button> <button class="w-full text-left p-3 rounded-xl border border-gray-200 text-sm hover:border-primary hover:bg-primary/5 transition">D. 1</button>
+      </div>
+      <div class="flex justify-between mt-6">
+       <button class="px-4 py-2 bg-gray-100 rounded-xl text-sm font-medium">← Sebelumnya</button> <button class="px-4 py-2 gradient-bg text-white rounded-xl text-sm font-semibold">Selanjutnya →</button>
+      </div>
+     </div>
+    </section><!-- BrainMate AI Chat -->
+    <section id="siswa-ai" class="page-section">
+     <h2 class="text-2xl font-bold mb-6">BrainMate AI</h2>
+     <div class="glass rounded-2xl overflow-hidden flex flex-col" style="height: calc(70 * min(var(--vh, 1vh), 1vh))">
+      <div class="flex-1 p-6 overflow-y-auto space-y-4" id="siswa-chat-area">
+       <div class="chat-bubble flex gap-3">
+        <div class="w-8 h-8 rounded-full gradient-bg flex items-center justify-center flex-shrink-0"><i data-lucide="sparkles" class="w-4 h-4 text-white"></i>
+        </div>
+        <div class="bg-white/80 rounded-2xl rounded-tl-sm p-4 max-w-lg">
+         <p class="text-sm">Hai! 👋 Saya BrainMate AI. Saya bisa membantu menjelaskan materi dengan bahasa sederhana, membuat contoh soal, atau membahas langkah demi langkah. Apa yang ingin kamu pelajari?</p>
+        </div>
+       </div>
+      </div>
+      <div class="p-4 border-t bg-white/50">
+       <form onsubmit="sendSiswaChat(event)" class="flex gap-3">
+        <input type="text" id="siswa-chat-input" placeholder="Tanya apa saja..." class="flex-1 px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"> <button type="submit" class="px-4 py-3 gradient-bg text-white rounded-xl"><i data-lucide="send" class="w-4 h-4"></i></button>
+       </form>
+       <div class="flex gap-2 mt-3 flex-wrap">
+        <button onclick="siswaQuickAction('Ringkas materi trigonometri')" class="text-xs px-3 py-1.5 bg-primary/10 text-primary rounded-full font-medium">Ringkas Materi</button> <button onclick="siswaQuickAction('Jelaskan lebih mudah tentang sin cos tan')" class="text-xs px-3 py-1.5 bg-secondary/10 text-secondary rounded-full font-medium">Jelaskan Lebih Mudah</button> <button onclick="siswaQuickAction('Buat contoh soal trigonometri')" class="text-xs px-3 py-1.5 bg-accent/10 text-accent rounded-full font-medium">Buat Contoh Soal</button> <button onclick="siswaQuickAction('Berikan latihan cepat')" class="text-xs px-3 py-1.5 bg-orange-100 text-orange-600 rounded-full font-medium">Latihan Cepat</button> <button onclick="siswaQuickAction('Cari kesalahan saya di soal ini')" class="text-xs px-3 py-1.5 bg-red-50 text-red-500 rounded-full font-medium">Cari Kesalahan</button>
+       </div>
+      </div>
+     </div>
+    </section><!-- Analisis Siswa -->
+    <section id="siswa-analisis" class="page-section">
+     <h2 class="text-2xl font-bold mb-6">Analisis Belajar</h2>
+     <div class="grid grid-cols-2 gap-4 mb-6">
+      <div class="glass rounded-2xl p-5">
+       <h4 class="text-sm font-semibold mb-3">Pretest vs Posttest</h4>
+       <div class="space-y-3">
+        <div>
+         <div class="flex justify-between text-xs mb-1"><span>Bab 1</span><span class="text-accent">85</span>
+         </div>
+         <div class="flex gap-1">
+          <div class="h-2 bg-secondary/40 rounded" style="width:55%"></div>
+          <div class="h-2 bg-accent rounded" style="width:85%"></div>
+         </div>
+        </div>
+        <div>
+         <div class="flex justify-between text-xs mb-1"><span>Bab 2</span><span class="text-accent">78</span>
+         </div>
+         <div class="flex gap-1">
+          <div class="h-2 bg-secondary/40 rounded" style="width:48%"></div>
+          <div class="h-2 bg-accent rounded" style="width:78%"></div>
+         </div>
+        </div>
+        <div>
+         <div class="flex justify-between text-xs mb-1"><span>Bab 3</span><span class="text-primary">62</span>
+         </div>
+         <div class="flex gap-1">
+          <div class="h-2 bg-secondary/40 rounded" style="width:40%"></div>
+          <div class="h-2 bg-primary rounded" style="width:62%"></div>
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="glass rounded-2xl p-5">
+       <h4 class="text-sm font-semibold mb-3">Tingkat Penguasaan</h4>
+       <div class="space-y-2">
+        <div class="flex items-center justify-between"><span class="text-xs">Aljabar</span>
+         <div class="flex items-center gap-2">
+          <div class="w-24 bg-gray-100 rounded-full h-2">
+           <div class="bg-accent rounded-full h-2" style="width:90%"></div>
+          </div><span class="text-xs font-semibold text-accent">90%</span>
+         </div>
+        </div>
+        <div class="flex items-center justify-between"><span class="text-xs">Geometri</span>
+         <div class="flex items-center gap-2">
+          <div class="w-24 bg-gray-100 rounded-full h-2">
+           <div class="bg-primary rounded-full h-2" style="width:75%"></div>
+          </div><span class="text-xs font-semibold text-primary">75%</span>
+         </div>
+        </div>
+        <div class="flex items-center justify-between"><span class="text-xs">Trigonometri</span>
+         <div class="flex items-center gap-2">
+          <div class="w-24 bg-gray-100 rounded-full h-2">
+           <div class="bg-orange-400 rounded-full h-2" style="width:55%"></div>
+          </div><span class="text-xs font-semibold text-orange-500">55%</span>
+         </div>
+        </div>
+        <div class="flex items-center justify-between"><span class="text-xs">Statistika</span>
+         <div class="flex items-center gap-2">
+          <div class="w-24 bg-gray-100 rounded-full h-2">
+           <div class="bg-accent rounded-full h-2" style="width:82%"></div>
+          </div><span class="text-xs font-semibold text-accent">82%</span>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div><!-- AI Insights -->
+     <div class="glass rounded-2xl p-6 border border-primary/20">
+      <div class="flex items-center gap-2 mb-4"><i data-lucide="sparkles" class="w-4 h-4 text-primary"></i>
+       <h4 class="text-sm font-semibold text-primary">AI Insight</h4>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+       <div class="p-3 bg-green-50 rounded-xl">
+        <p class="text-xs font-semibold text-green-700 mb-1">✓ Dikuasai</p>
+        <p class="text-xs text-green-600">Aljabar, Statistika</p>
+       </div>
+       <div class="p-3 bg-red-50 rounded-xl">
+        <p class="text-xs font-semibold text-red-700 mb-1">⚠ Perlu Latihan</p>
+        <p class="text-xs text-red-600">Trigonometri, Fungsi Kuadrat</p>
+       </div>
+       <div class="p-3 bg-orange-50 rounded-xl">
+        <p class="text-xs font-semibold text-orange-700 mb-1">🔄 Kesalahan Umum</p>
+        <p class="text-xs text-orange-600">Konversi sudut, tanda negatif</p>
+       </div>
+       <div class="p-3 bg-blue-50 rounded-xl">
+        <p class="text-xs font-semibold text-blue-700 mb-1">🎯 Prediksi</p>
+        <p class="text-xs text-blue-600">Kesiapan evaluasi: 72%</p>
+       </div>
+      </div>
+     </div>
+    </section><!-- Profil Siswa -->
+    <section id="siswa-profil" class="page-section">
+     <h2 class="text-2xl font-bold mb-6">Profil Saya</h2>
+     <div class="grid grid-cols-2 gap-4">
+      <div class="glass rounded-2xl p-6">
+       <h4 class="font-semibold text-sm mb-4">Data Diri</h4>
+       <div class="space-y-4">
+        <div><label class="text-xs text-gray-500 font-medium block mb-1">Nama Lengkap</label> <input type="text" value="Mbak Zulinda Ayu Andira PEND. KIMIA UNY" class="w-full px-3 py-2 bg-white/60 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/30">
+        </div>
+        <div><label class="text-xs text-gray-500 font-medium block mb-1">Email</label> <input type="email" value="andi@sekolah.id" class="w-full px-3 py-2 bg-white/60 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/30">
+        </div>
+        <div><label class="text-xs text-gray-500 font-medium block mb-1">Kelas</label> <input type="text" value="X - A" class="w-full px-3 py-2 bg-white/60 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/30">
+        </div><button class="w-full px-4 py-2 gradient-bg text-white rounded-xl text-sm font-semibold">Simpan Perubahan</button>
+       </div>
+      </div>
+      <div class="space-y-4">
+       <div class="glass rounded-2xl p-6">
+        <h4 class="font-semibold text-sm mb-3">Preferensi Belajar</h4>
+        <div class="space-y-3">
+         <div><label class="text-xs text-gray-500 font-medium block mb-1">Gaya Belajar</label> <select class="w-full px-3 py-2 bg-white/60 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"> <option>Visual</option> <option selected="">Auditori</option> <option>Kinestetik</option> </select>
+         </div>
+         <div><label class="text-xs text-gray-500 font-medium block mb-1">Notifikasi</label>
+          <div class="flex items-center gap-2"><input type="checkbox" checked="" class="w-4 h-4 rounded"> <span class="text-sm">Aktifkan notifikasi pembelajaran</span>
+          </div>
+         </div>
+        </div>
+       </div>
+       <div class="glass rounded-2xl p-6">
+        <h4 class="font-semibold text-sm mb-3">Statistik</h4>
+        <div class="space-y-2">
+         <div class="flex justify-between text-sm"><span class="text-gray-600">Hari Belajar</span> <span class="font-semibold text-primary">24</span>
+         </div>
+         <div class="flex justify-between text-sm"><span class="text-gray-600">Total Jam</span> <span class="font-semibold text-primary">48</span>
+         </div>
+         <div class="flex justify-between text-sm"><span class="text-gray-600">Soal Terjawab</span> <span class="font-semibold text-primary">156</span>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </section>
+   </main>
+  </div>
+  <script src="/_sdk/editing_sdk.js"></script>
+  <script>
+    function switchRole(role) {
+        document.getElementById('guru-view').classList.toggle('hidden', role !== 'guru');
+        document.getElementById('siswa-view').classList.toggle('hidden', role !== 'siswa');
+        document.getElementById('btn-guru').classList.toggle('bg-primary', role === 'guru');
+        document.getElementById('btn-guru').classList.toggle('text-white', role === 'guru');
+        document.getElementById('btn-guru').classList.toggle('text-gray-600', role !== 'guru');
+        document.getElementById('btn-siswa').classList.toggle('bg-primary', role === 'siswa');
+        document.getElementById('btn-siswa').classList.toggle('text-white', role === 'siswa');
+        document.getElementById('btn-siswa').classList.toggle('text-gray-600', role !== 'siswa');
+    }
+
+    function showSection(role, section) {
+        const view = document.getElementById(role + '-view');
+        view.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+        document.getElementById(role + '-' + section).classList.add('active');
+        view.querySelectorAll('.sidebar-item').forEach(b => b.classList.remove('active'));
+        view.querySelector(`[data-nav="${section}"]`).classList.add('active');
+    }
+
+    function addChatBubble(areaId, text, isUser) {
+        const area = document.getElementById(areaId);
+        const div = document.createElement('div');
+        div.className = 'chat-bubble flex gap-3' + (isUser ? ' justify-end' : '');
+        if (isUser) {
+            div.innerHTML = `<div class="bg-primary text-white rounded-2xl rounded-tr-sm p-4 max-w-lg"><p class="text-sm">${text}</p></div>`;
+        } else {
+            div.innerHTML = `<div class="w-8 h-8 rounded-full gradient-bg flex items-center justify-center flex-shrink-0"><i data-lucide="sparkles" class="w-4 h-4 text-white"></i></div><div class="bg-white/80 rounded-2xl rounded-tl-sm p-4 max-w-lg"><p class="text-sm">${text}</p></div>`;
+        }
+        area.appendChild(div);
+        area.scrollTop = area.scrollHeight;
+        lucide.createIcons();
+    }
+
+    function sendGuruChat(e) {
+        e.preventDefault();
+        const input = document.getElementById('guru-chat-input');
+        if (!input.value.trim()) return;
+        addChatBubble('guru-chat-area', input.value, true);
+        const msg = input.value;
+        input.value = '';
+        setTimeout(() => addChatBubble('guru-chat-area', 'Baik, saya akan membantu Anda dengan "' + msg + '". Mohon tunggu sebentar sementara saya memprosesnya...', false), 800);
+    }
+
+    function sendSiswaChat(e) {
+        e.preventDefault();
+        const input = document.getElementById('siswa-chat-input');
+        if (!input.value.trim()) return;
+        addChatBubble('siswa-chat-area', input.value, true);
+        const msg = input.value;
+        input.value = '';
+        setTimeout(() => addChatBubble('siswa-chat-area', 'Pertanyaan bagus! Mari kita bahas "' + msg + '" langkah demi langkah...', false), 800);
+    }
+
+    function guruQuickAction(text) {
+        addChatBubble('guru-chat-area', text, true);
+        showSection('guru', 'ai');
+        setTimeout(() => addChatBubble('guru-chat-area', 'Tentu! Saya sedang memproses permintaan Anda...', false), 800);
+    }
+
+    function siswaQuickAction(text) {
+        addChatBubble('siswa-chat-area', text, true);
+        showSection('siswa', 'ai');
+        setTimeout(() => addChatBubble('siswa-chat-area', 'Oke! Saya akan bantu kamu. Tunggu sebentar ya...', false), 800);
+    }
+
+    lucide.createIcons();
+</script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0b2a23d21c0cddd',t:'MTc4MTM2OTg0MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+</body></html>
