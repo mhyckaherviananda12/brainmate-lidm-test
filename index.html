@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vecta AI</title>
+    <title>Vecta Learning</title>
     <script src="https://cdn.tailwindcss.com/3.4.17"></script>
     <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -111,7 +111,7 @@
     <div id="guru-view" class="flex min-h-screen transition-opacity duration-300">
         <aside id="guru-sidebar" class="w-64 bg-white border-r border-gray-100 p-6 flex flex-col fixed h-full z-40 transition-transform duration-300 -translate-x-full md:translate-x-0">
             <div class="flex items-center gap-3 mb-8">
-                <div class="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center"><i data-lucide="brain" class="w-5 h-5 text-white"></i></div>
+                <img src="vecta-logo.png" alt="Vecta Logo" class="w-10 h-10 rounded-xl object-contain">
                 <h1 class="font-bold text-lg text-gray-900 text-[26px]">Vecta</h1>
             </div>
             <nav class="flex-1 space-y-1 overflow-y-auto">
@@ -203,7 +203,43 @@
                         </div>
                         <button class="w-full py-2 bg-primary/10 text-primary rounded-lg text-sm font-semibold hover:bg-primary/20 transition">Kelola Kelas</button>
                     </div>
+                    <div class="glass p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="font-bold text-lg text-gray-900">Matematika X-B</h3>
+                                <p class="text-xs text-gray-500">Semester Genap 2026</p>
+                            </div>
+                            <span class="px-2 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-md">Aktif</span>
+                        </div>
+                        <div class="flex items-center gap-4 mb-4 text-sm text-gray-600">
+                            <div class="flex items-center gap-1"><i data-lucide="users" class="w-4 h-4 text-gray-400"></i> 30 Siswa</div>
+                            <div class="flex items-center gap-1"><i data-lucide="file-text" class="w-4 h-4 text-gray-400"></i> 12 Modul</div>
+                        </div>
+                        <div class="mb-4">
+                            <div class="flex justify-between text-xs mb-1 text-gray-500"><span>Progress Kelas</span><span class="font-bold text-secondary">65%</span></div>
+                            <div class="w-full bg-gray-200 rounded-full h-1.5"><div class="bg-secondary rounded-full h-1.5 w-[65%]"></div></div>
+                        </div>
+                        <button class="w-full py-2 bg-primary/10 text-primary rounded-lg text-sm font-semibold hover:bg-primary/20 transition">Kelola Kelas</button>
                     </div>
+                    <div class="glass p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="font-bold text-lg text-gray-900">Matematika XI-A</h3>
+                                <p class="text-xs text-gray-500">Semester Genap 2026</p>
+                            </div>
+                            <span class="px-2 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-md">Aktif</span>
+                        </div>
+                        <div class="flex items-center gap-4 mb-4 text-sm text-gray-600">
+                            <div class="flex items-center gap-1"><i data-lucide="users" class="w-4 h-4 text-gray-400"></i> 28 Siswa</div>
+                            <div class="flex items-center gap-1"><i data-lucide="file-text" class="w-4 h-4 text-gray-400"></i> 15 Modul</div>
+                        </div>
+                        <div class="mb-4">
+                            <div class="flex justify-between text-xs mb-1 text-gray-500"><span>Progress Kelas</span><span class="font-bold text-accent">90%</span></div>
+                            <div class="w-full bg-gray-200 rounded-full h-1.5"><div class="bg-accent rounded-full h-1.5 w-[90%]"></div></div>
+                        </div>
+                        <button class="w-full py-2 bg-primary/10 text-primary rounded-lg text-sm font-semibold hover:bg-primary/20 transition">Kelola Kelas</button>
+                    </div>
+                </div>
             </section>
             
             <section id="guru-materi" class="page-section">
@@ -213,10 +249,26 @@
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div class="glass p-5 rounded-2xl flex gap-4 items-center border border-gray-100">
-                        <div class="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center shrink-0"><i data-lucide="file-text" class="text-red-500 w-6 h-6"></i></div>
+                        <div class="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center shrink-0"><i data-lucide="file-text" class="text-red-50 w-6 h-6"></i></div>
                         <div class="flex-1">
                             <h4 class="font-bold text-sm text-gray-900">Sistem Persamaan Linear</h4>
                             <p class="text-xs text-gray-500">PDF • 2.4 MB</p>
+                        </div>
+                        <button class="text-gray-400 hover:text-primary"><i data-lucide="more-vertical" class="w-5 h-5"></i></button>
+                    </div>
+                    <div class="glass p-5 rounded-2xl flex gap-4 items-center border border-gray-100">
+                        <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center shrink-0"><i data-lucide="video" class="text-blue-500 w-6 h-6"></i></div>
+                        <div class="flex-1">
+                            <h4 class="font-bold text-sm text-gray-900">Konsep Trigonometri Dasar</h4>
+                            <p class="text-xs text-gray-500">Video • 15:20 Menit</p>
+                        </div>
+                        <button class="text-gray-400 hover:text-primary"><i data-lucide="more-vertical" class="w-5 h-5"></i></button>
+                    </div>
+                    <div class="glass p-5 rounded-2xl flex gap-4 items-center border border-gray-100">
+                        <div class="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center shrink-0"><i data-lucide="presentation" class="text-orange-500 w-6 h-6"></i></div>
+                        <div class="flex-1">
+                            <h4 class="font-bold text-sm text-gray-900">Statistika Deskriptif</h4>
+                            <p class="text-xs text-gray-500">PPTX • 32 Slide</p>
                         </div>
                         <button class="text-gray-400 hover:text-primary"><i data-lucide="more-vertical" class="w-5 h-5"></i></button>
                     </div>
@@ -277,6 +329,13 @@
                                 <td class="px-6 py-4"><span class="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-bold">Pilihan Ganda</span></td>
                                 <td class="px-6 py-4"><button class="text-primary hover:underline text-xs font-semibold">Edit</button></td>
                             </tr>
+                            <tr class="hover:bg-white/60 transition">
+                                <td class="px-6 py-4 font-bold text-gray-900">Latihan Trigonometri</td>
+                                <td class="px-6 py-4 text-gray-600">Geometri</td>
+                                <td class="px-6 py-4 text-gray-600">5 Soal</td>
+                                <td class="px-6 py-4"><span class="px-2 py-1 bg-purple-100 text-purple-700 rounded text-xs font-bold">Uraian</span></td>
+                                <td class="px-6 py-4"><button class="text-primary hover:underline text-xs font-semibold">Edit</button></td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -308,7 +367,7 @@
                         <div class="chat-bubble flex gap-3">
                             <div class="w-8 h-8 rounded-full gradient-bg flex items-center justify-center flex-shrink-0 shadow-md"><i data-lucide="sparkles" class="w-4 h-4 text-white"></i></div>
                             <div class="bg-white/80 dark:bg-gray-800 rounded-2xl rounded-tl-sm p-4 max-w-[85%] md:max-w-lg shadow-sm border border-gray-100 dark:border-gray-700">
-                                <p class="text-sm">Halo Pak Eko! Saya Vecta, asisten cerdas buatan Mhycka dari UNY. Apa yang bisa saya bantu untuk merencanakan kelas hari ini?</p>
+                                <p class="text-sm">Halo Pak Eko! Saya Vecta, asisten cerdas buatan Tim dari UNY. Apa yang bisa saya bantu untuk merencanakan kelas hari ini?</p>
                             </div>
                         </div>
                     </div>
@@ -346,7 +405,7 @@
     <div id="siswa-view" class="flex min-h-screen transition-opacity duration-300 hidden">
         <aside id="siswa-sidebar" class="w-64 bg-white border-r border-gray-100 p-6 flex flex-col fixed h-full z-40 transition-transform duration-300 -translate-x-full md:translate-x-0">
             <div class="flex items-center gap-3 mb-8">
-                <div class="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center"><i data-lucide="brain" class="w-5 h-5 text-white"></i></div>
+                <img src="vecta-logo.png" alt="Vecta Logo" class="w-10 h-10 rounded-xl object-contain">
                 <h1 class="font-bold text-lg text-gray-900 text-[26px]">Vecta</h1>
             </div>
             <nav class="flex-1 space-y-1 overflow-y-auto">
@@ -487,7 +546,7 @@
                         <div class="chat-bubble flex gap-3">
                             <div class="w-8 h-8 rounded-full gradient-bg flex items-center justify-center flex-shrink-0 shadow-md"><i data-lucide="sparkles" class="w-4 h-4 text-white"></i></div>
                             <div class="bg-white/90 dark:bg-gray-800 rounded-2xl rounded-tl-sm p-4 max-w-[85%] md:max-w-lg shadow-sm border border-gray-100 dark:border-gray-700">
-                                <p class="text-sm">Hai Zulinda! 👋 Saya Vecta, tutor AI rancangan Mhycka. Mau bahas tugas, tanya konsep, atau belajar materi baru hari ini?</p>
+                                <p class="text-sm">Hai Zulinda! 👋 Saya Vecta, tutor AI Kamu. Mau bahas tugas, tanya konsep, atau belajar materi baru hari ini?</p>
                             </div>
                         </div>
                     </div>
@@ -672,7 +731,6 @@
             setTimeout(() => { toast.classList.remove('show'); }, 3000);
         }
 
-        // --- FUNGSI MUNCULKAN BUBBLE CHAT BIASA (User/Error) ---
         function addChatBubble(areaId, text, isUser) {
             const area = document.getElementById(areaId);
             const div = document.createElement('div');
@@ -688,7 +746,6 @@
             lucide.createIcons();
         }
 
-        // --- EFEK ANIMASI MENGETIK AI ---
         function typeWriterHTML(element, htmlText, speed) {
             let i = 0;
             let isTag = false;
@@ -707,12 +764,11 @@
                         
                         i++;
                         
-                        // Scroll ke bawah saat ngetik
                         const area = element.closest('.overflow-y-auto');
                         if(area) area.scrollTop = area.scrollHeight;
 
                         if (isTag) {
-                            type(); // Skip delay kalau lagi baca tag HTML biar gak rusak stylingnya
+                            type(); 
                         } else {
                             setTimeout(type, speed);
                         }
@@ -755,10 +811,9 @@
         }
 
         // ==========================================
-        // FETCH GROQ API (LLAMA 3) - REVISED PROMPT UNTUK VECTA
+        // FETCH GROQ API (LLAMA 3) - REVISED PROMPT
         // ==========================================
         async function fetchGroqAPI(msg, role) {
-            // PROMPT YANG SUDAH DIAMANKAN & DISEMPURNAKAN
             const systemPrompt = role === 'guru' 
                 ? "Kamu adalah Vecta, asisten pembelajaran cerdas yang dirancang oleh Mhycka dari Universitas Negeri Yogyakarta (UNY) dalam pengembangan inovasi untuk Lomba Inovasi Digital Mahasiswa (LIDM). Pengguna saat ini adalah guru bernama Pak Eko. Panggil pengguna dengan 'Pak Eko' jika diperlukan. Bantu dalam perencanaan pembelajaran, evaluasi, analisis perkembangan siswa, penyusunan materi, dan pemanfaatan teknologi pendidikan. Jawab secara profesional, ringkas, ramah, dan solutif menggunakan bahasa Indonesia."
                 : "Kamu adalah Vecta, tutor pembelajaran adaptif yang dirancang oleh Mhycka dari Universitas Negeri Yogyakarta (UNY) dalam pengembangan inovasi untuk Lomba Inovasi Digital Mahasiswa (LIDM). Pengguna saat ini adalah siswa SMA bernama Zulinda. Panggil pengguna dengan 'Zulinda' jika diperlukan. Bantu memahami materi pelajaran dengan memberikan penjelasan langkah demi langkah secara perlahan. JANGAN langsung memberikan jawaban akhir instan, melainkan berikan petunjuk (clue) agar Zulinda berpikir. Gunakan bahasa Indonesia yang santai, edukatif, mudah dimengerti, dan berikan semangat belajar.";
@@ -794,28 +849,20 @@
             }
         }
 
-        // ==========================================
-        // PROSES CHAT ASYNC DENGAN EFEK NGETIK
-        // ==========================================
         async function processChat(areaId, inputId, role) {
             const input = document.getElementById(inputId);
             const msg = input.value.trim();
             if (!msg) return;
             
-            // Masukkan chat User
             addChatBubble(areaId, msg, true);
             input.value = '';
             
-            // Tampilkan animasi bola-bola mikir
             showTyping(areaId);
             
-            // Fetch ke Llama 3 API
             const aiResponse = await fetchGroqAPI(msg, role);
             
-            // Hapus animasi bola-bola
             removeTyping(areaId);
             
-            // Siapkan wadah (bubble kosong) untuk AI mengetik
             const area = document.getElementById(areaId);
             const div = document.createElement('div');
             div.className = 'chat-bubble flex gap-3 mb-4';
@@ -825,7 +872,6 @@
             
             const contentDiv = div.querySelector('.chat-content-ai');
             
-            // Jalankan fungsi ngetik huruf demi huruf (kecepatan 15ms per huruf)
             await typeWriterHTML(contentDiv, aiResponse, 15);
         }
 
