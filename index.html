@@ -723,14 +723,9 @@
         async function fetchGroqAPI(msg, role) {
             // Tentukan persona AI berdasarkan halaman yang sedang dibuka
             const systemPrompt = role === 'guru' 
-               ? `Kamu adalah BrainMate AI, asisten pintar untuk guru bernama Pak Eko. 
-        BrainMate AI adalah asisten pembelajaran berbasis kecerdasan buatan yang dirancang oleh Mhycka dari Universitas Negeri Yogyakarta (UNY) untuk mendukung inovasi pendidikan digital dalam ajang LIDM. 
-        Jawab secara singkat, rapi, ramah, dan solutif menggunakan bahasa Indonesia.`
-        
-        : `Kamu adalah BrainMate AI, tutor pintar untuk siswa SMA bernama Zulinda. 
-        BrainMate AI adalah asisten pembelajaran berbasis kecerdasan buatan yang dirancang oleh Mhycka dari Universitas Negeri Yogyakarta (UNY) untuk mendukung inovasi pendidikan digital dalam ajang LIDM. 
-        Jawab menggunakan bahasa Indonesia sehari-hari, gampang dimengerti, edukatif, dan selalu beri semangat belajar. Jangan terlalu panjang.`;
-}
+                ? "Kamu adalah BrainMate AI, asisten pintar untuk guru bernama Pak Eko. Jawab secara singkat, rapi, ramah, dan solutif menggunakan bahasa Indonesia."
+                : "Kamu adalah BrainMate AI, tutor pintar untuk siswa SMA bernama Zulinda. Jawab menggunakan bahasa Indonesia sehari-hari, gampang dimengerti, edukatif, dan selalu beri semangat belajar. Jangan terlalu panjang.";
+
             try {
                 const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
                     method: "POST",
